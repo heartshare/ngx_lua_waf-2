@@ -6,13 +6,13 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 
 增加功能如下：
 
-1、增加黑白名单网段IP限制，能力有限，网段不能写成172.16.1.0/24，只能写成172.16.1.0-172.16.1.255了。
-ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
+1、增加黑白名单网段IP限制，例如：ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
 
-2、增加User-Agent白名单，用来过滤蜘蛛的。
-在wafconf文件夹下white-user-agent文件中添加
+2、增加黑白名单IP段掩码限制方法，例如：ipWhitelist={"127.0.0.1","192.168.1.0/24}"
 
-3、增加server_name白名单。
+3、增加User-Agent白名单，用来过滤蜘蛛的。在wafconf文件夹下white-user-agent文件中添加
+
+4、增加server_name白名单。
 
 
 
@@ -27,6 +27,7 @@ ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
 	防止webshell上传
 	
 【1】###环境推荐安装:
+
 1.1）推荐使用lujit2.1做lua支持
 
 1.2）ngx_lua如果是0.9.2以上版本，建议正则过滤函数改为ngx.re.find，匹配效率会提高三倍左右。
@@ -38,6 +39,7 @@ ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
 
 【2】###安装使用说明：
 openresty安装路径假设为: /usr/local/openresty
+
 2.1）把ngx_lua_waf下载到/usr/local/openresty/nginx/conf/目录下,解压命名为waf
 
 2.2）在nginx.conf的http段添加
