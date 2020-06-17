@@ -118,13 +118,10 @@ openresty安装路径假设为: /usr/local/openresty
 注意:默认，本机在白名单不过滤，可自行调整config.lua配置
 
 
+
 【特别说明】
 以上代码参考以下项目：
-
 https://github.com/loveshell/ngx_lua_waf
-
 https://github.com/whsir/ngx_lua_waf
-
 https://github.com/oneinstack/ngx_lua_waf
-
 感谢ngx_lua模块的开发者，感谢openresty的春哥！！！
