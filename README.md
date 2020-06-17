@@ -1,10 +1,6 @@
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu) 
 
-
-安装配置可参考：https://blog.whsir.com/post-4141.html
-
-
 ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf)作者二次更改，代码很简单，高性能和轻量级。
 
 
@@ -20,11 +16,6 @@ ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
 
 
 
-目前我的wlnmp一键包默认的nginx已经集成了此版本
-
-wlnmp一键包，支持lnmp环境通过yum方式一键快速部署：https://www.wlnmp.com/
-
-
 ###用途：
 
 	防止sql注入，本地包含，部分溢出，fuzzing测试，xss,SSRF等web攻击
@@ -35,13 +26,13 @@ wlnmp一键包，支持lnmp环境通过yum方式一键快速部署：https://www
 	屏蔽图片附件类目录php执行权限
 	防止webshell上传
 	
-###推荐安装:
+（1）###环境推荐安装:
 
 推荐使用lujit2.1做lua支持
 
 ngx_lua如果是0.9.2以上版本，建议正则过滤函数改为ngx.re.find，匹配效率会提高三倍左右。
 
-###使用说明：
+（2）###安装使用说明：
 
 nginx安装路径假设为:/usr/local/nginx/conf/
 
@@ -49,16 +40,17 @@ nginx安装路径假设为:/usr/local/nginx/conf/
 
 在nginx.conf的http段添加
 
-		lua_package_path "/usr/local/nginx/conf/waf/?.lua";
+        lua_package_path "/usr/local/nginx/conf/waf/?.lua";
         lua_shared_dict limit 10m;
         init_by_lua_file  /usr/local/nginx/conf/waf/init.lua; 
-    	access_by_lua_file /usr/local/nginx/conf/waf/waf.lua;
+        access_by_lua_file /usr/local/nginx/conf/waf/waf.lua;
 		
 配置config.lua里的waf规则目录(一般在waf/conf/目录下)
 
         RulePath = "/usr/local/nginx/conf/waf/wafconf/"
 
 路径如有变动，需对应修改，然后重启nginx即可
+
 
 ###配置文件详细说明：
 
@@ -101,7 +93,7 @@ nginx安装路径假设为:/usr/local/nginx/conf/
 
 部署完毕可以尝试如下命令：
 
-        curl http://xxxx/test.php?id=../etc/passwd
+        curl http://xxxx/test.php?id=/etc/passwd
         返回"Please go away~~"字样，说明规则生效。
 		
 注意:默认，本机在白名单不过滤，可自行调整config.lua配置
