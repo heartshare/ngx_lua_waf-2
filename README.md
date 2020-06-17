@@ -33,7 +33,8 @@ ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
 
 1.3）推荐直接使用openresty部署，而不是自己手动部署nginx+lua，下面安装示例使用“openresty/1.15.8.3”
 
-1.4）推荐编译安装openresty时添加后端检查模块 “nginx_upstream_check_module(https://github.com/yaoweibin/nginx_upstream_check_module)”,并添加模块参数“--with-http_geoip_module”
+1.4）推荐编译安装openresty时添加后端检查模块 “[nginx_upstream_check_module](https://github.com/yaoweibin/nginx_upstream_check_module)”,并添加模块参数“--with-http_geoip_module”
+
 
 【2】###安装使用说明：
 openresty安装路径假设为: /usr/local/openresty
