@@ -15,7 +15,7 @@ CookieMatch="on"
 PostMatch="on"
 --是否拦截post攻击
 
-whiteModule="off"
+whiteModule="on"
 --是否开启URL白名单
 
 black_fileExt={"php","jsp"}
@@ -39,8 +39,10 @@ hostWhiteList = {"blog.whsir.com"}
 
 CCDeny="on"
 --是否开启拦截cc攻击(需要nginx.conf的http段增加lua_shared_dict limit 10m;)
-CCrate="10/60"
---设置cc攻击频率，单位为秒.默认1分钟同一个IP只能请求同一个地址100次
+urlCCrate="100/60"
+-- ip访问特定url频率（次/秒）
+ipCCrate="500/60"
+-- 访问ip频次检测（次/秒）,该值应该是urlCCrate的5-20倍左右
 
 
 html=[[
@@ -77,4 +79,5 @@ dent:0; text-indent:0px;">1）检查提交内容；</li>
 </div> </div> </div>
 </body></html>
 ]]
+
 

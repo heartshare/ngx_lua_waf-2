@@ -6,12 +6,26 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 
 【**】正在二次开发中的功能
 
+1、频繁访问时，不再是单纯返回403，加入可以选功能图片验证码
+
+
+【2020.06.18】
+
 1、获取客户端IP，支持代理，多级代理情况下只取最后一级
 
-2、频繁访问时，不再是单纯返回403，加入可以选功能图片验证码
+2、修改原来单一针对IP做cc检测。添加URL频率cc攻击检测，其次才是Ip 频率cc攻击检测（需要修改nginx配置，lua_shared_dict部分）
+
+3、优化局部变量，减少高并发时变量覆盖
+
+4、优化日志记录参时提醒
+
+5、优化规则执行顺序
 
 
 
+【2020.06.17】
+
+1、增加黑白名单IP段掩码限制方法，例如：ipWhitelist={"127.0.0.1","192.168.1.0/24"}
 
 
 
@@ -19,11 +33,9 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 
 1、增加黑白名单网段IP限制，例如：ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
 
-2、增加黑白名单IP段掩码限制方法，例如：ipWhitelist={"127.0.0.1","192.168.1.0/24"}
+2、增加User-Agent白名单，用来过滤蜘蛛的。在wafconf文件夹下white-user-agent文件中添加
 
-3、增加User-Agent白名单，用来过滤蜘蛛的。在wafconf文件夹下white-user-agent文件中添加
-
-4、增加server_name白名单。
+3、增加server_name白名单。
 
 
 
@@ -57,7 +69,8 @@ openresty安装路径假设为: /usr/local/openresty
 2.2）在nginx.conf的http段添加
 
     lua_package_path  "/usr/local/openresty/nginx/conf/waf/?.lua";
-    lua_shared_dict limit 10m;
+    lua_shared_dict urllimit 10m;
+    lua_shared_dict iplimit 10m;
     init_by_lua_file   /usr/local/openresty/nginx/conf/waf/init.lua;
     access_by_lua_file /usr/local/openresty/nginx/conf/waf/waf.lua;
 		

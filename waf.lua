@@ -5,12 +5,12 @@ if whiteip() then
 elseif whitehost() then
 elseif whiteua() then
 elseif blockip() then
+elseif whiteurl() then
 elseif denycc() then
 elseif ngx.var.http_Acunetix_Aspect then
     ngx.exit(444)
 elseif ngx.var.http_X_Scan_Memo then
     ngx.exit(444)
-elseif whiteurl() then
 elseif ua() then
 elseif url() then
 elseif args() then

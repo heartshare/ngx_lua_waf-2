@@ -15,14 +15,32 @@ PathInfoFix = optionIsOn(PathInfoFix)
 attacklog = optionIsOn(attacklog)
 CCDeny = optionIsOn(CCDeny)
 Redirect=optionIsOn(Redirect)
+
+--验证码
+function WafCaptcha()
+    html_file = io.open("waf_captcha/waf-captcha.html","r")
+    html_v = html_file:read("*a")
+    say_html(html_v)
+end
+
+
+--获取客户端IP，支持代理
 function getClientIp()
     local headers = ngx.req.get_headers()
-    local reip = headers["X-REAL-IP"] or headers["X_FORWARDED_FOR"] or ngx.var.remote_addr or "0.0.0.0"
+    local reip = headers["X-REAL-IP"] or headers["X_FORWARDED_FOR"] or ngx.var.remote_addr
     if reip == nil then
-        reip = "unknown"
+        local reip = "unknown"
+    end
+    --检查返回的IP是否是多个值，如果是，只取最后一个
+    if string.find(reip, ',') then
+        local table_ip = split(reip,",")
+        local table_len = table.getn(table_ip)
+        local reip = table_ip[table_len]
     end
     return reip
 end
+
+
 function write(logfile,msg)
     local fd = io.open(logfile,"ab")
     if fd == nil then return end
@@ -30,16 +48,19 @@ function write(logfile,msg)
     fd:flush()
     fd:close()
 end
-function log(method,url,data,ruletag)
+
+function log(data,ruletag)
+    local request_method = ngx.req.get_method()
+    local url = ngx.var.request_uri
     if attacklog then
         local realIp = getClientIp()
         local ua = ngx.var.http_user_agent
         local servername=ngx.var.server_name
         local time=ngx.localtime()
         if ua  then
-            line = realIp.." ["..time.."] \""..method.." "..servername..url.."\" \""..data.."\"  \""..ua.."\" \""..ruletag.."\"\n"
+            line = realIp.." ["..time.."] \""..request_method.." "..servername..url.."\" \""..data.."\"  \""..ua.."\" \""..ruletag.."\"\n"
         else
-            line = realIp.." ["..time.."] \""..method.." "..servername..url.."\" \""..data.."\" - \""..ruletag.."\"\n"
+            line = realIp.." ["..time.."] \""..request_method.." "..servername..url.."\" \""..data.."\" - \""..ruletag.."\"\n"
         end
         local filename = logpath..'/'..servername.."_"..ngx.today().."_sec.log"
         write(filename,line)
@@ -118,8 +139,8 @@ function whitehost()
 	    local items = Set(hostWhiteList)
 	    for host in pairs(items) do
 	    	if ngxmatch(ngx.var.host, host, "isjo") then
-				log('POST',ngx.var.request_uri,"-","white host".. host)
-	    		return true
+                    log("-","white host: ".. host)
+	            return true
 	    	end
 	    end
 	end
@@ -129,7 +150,7 @@ end
 function args()
     for _,rule in pairs(argsrules) do
             if ngxmatch(unescape(ngx.var.request_uri),rule,"isjo") then
-                    log('test',ngx.var.request_uri,"-",rule)
+                    log("-",rule)
                     say_html()
                     return true
             end
@@ -148,7 +169,7 @@ function args()
                 data=val
             end
             if data and type(data) ~= "boolean" and rule ~="" and ngxmatch(unescape(data),rule,"isjo") then
-                log('GET',ngx.var.request_uri,"-",rule)
+                log("-", "args in attack rules: " .. rule .. " data: " .. tostring(data))
                 say_html()
                 return true
             end
@@ -161,7 +182,7 @@ function url()
     if UrlDeny then
         for _,rule in pairs(urlrules) do
             if rule ~="" and ngxmatch(ngx.var.request_uri,rule,"isjo") then
-                log('GET',ngx.var.request_uri,"-",rule)
+                log("-", "url in attack rules: " .. rule)
                 say_html()
                 return true
             end
@@ -175,9 +196,9 @@ function ua()
     if ua ~= nil then
         for _,rule in pairs(uarules) do
             if rule ~="" and ngxmatch(ua,rule,"isjo") then
-                log('UA',ngx.var.request_uri,"-",rule)
+                log("-", "ua in attack rules: " .. rule)
                 say_html()
-            return true
+                return true
             end
         end
     end
@@ -187,7 +208,7 @@ end
 function body(data)
     for _,rule in pairs(postrules) do
         if rule ~="" and data~="" and ngxmatch(unescape(data),rule,"isjo") then
-            log('POST',ngx.var.request_uri,data,rule)
+            log(data,rule)
             say_html()
             return true
         end
@@ -195,41 +216,71 @@ function body(data)
     return false
 end
 
+
+
 function cookie()
     local ck = ngx.var.http_cookie
     if CookieCheck and ck then
         for _,rule in pairs(ckrules) do
             if rule ~="" and ngxmatch(ck,rule,"isjo") then
-                log('Cookie',ngx.var.request_uri,"-",rule)
+                log("-", "cookie in attack rules: " .. rule)
                 say_html()
-            return true
+                return true
             end
         end
     end
     return false
 end
 
+
+--[[
+    @comment cc攻击匹配
+    @param
+    @return
+]]
 function denycc()
     if CCDeny then
-        local uri=ngx.var.uri
-        CCcount=tonumber(string.match(CCrate,'(.*)/'))
-        CCseconds=tonumber(string.match(CCrate,'/(.*)'))
-        local token = getClientIp()..uri
-        local limit = ngx.shared.limit
-        local req,_=limit:get(token)
-        if req then
+        local uri = ngx.var.uri
+        local CCcount = tonumber(string.match(urlCCrate, "(.*)/"))
+        local CCseconds = tonumber(string.match(urlCCrate, "/(.*)"))
+        local ipCCcount = tonumber(string.match(ipCCrate, "(.*)/"))
+        local ipCCseconds = tonumber(string.match(ipCCrate, "/(.*)"))
+        local now_ip = getClientIp()
+        local token = now_ip .. uri
+        local urllimit = ngx.shared.urllimit
+        local iplimit = ngx.shared.iplimit
+        local req, _ = urllimit:get(token)
+        local ipreq, _ = iplimit:get(now_ip)
+
+        if req then -- ip访问url频次检测
             if req > CCcount then
-                 say_html("频繁访问限制，请稍后再试")
+                log("-", "IP get url over times. ")
+                say_html("IpURL频繁访问限制，请稍后再试")
                 return true
             else
-                 limit:incr(token,1)
+                urllimit:incr(token, 1)
             end
         else
-            limit:set(token,1,CCseconds)
+            urllimit:set(token, 1, CCseconds)
+        end
+
+        if ipreq then -- 访问ip频次检测
+            if ipreq > ipCCcount then
+                log("-", "IP get host over times. ")
+                say_html("IP频繁访问限制，请稍后再试")
+                return true
+            else
+                iplimit:incr(now_ip, 1)
+            end
+        else
+            iplimit:set(now_ip, 1, ipCCseconds)
         end
     end
+
     return false
 end
+
+
 
 function whiteua()
     local ua = ngx.var.http_user_agent
@@ -273,7 +324,7 @@ end
 
 --拼接IP每部分的二进制，返回IP完整的二进制
 function IP2bin(ip_s)
-    local _,_,IP_p1,IP_p2,IP_p3,IP_p4=string.find(ip_s, "(%d+).(%d+).(%d+).(%d+)")
+    local IP_p1,IP_p2,IP_p3,IP_p4=string.match(ip_s, "(%d+).(%d+).(%d+).(%d+)")
     ip_str = byte2bin(IP_p1)..byte2bin(IP_p2)..byte2bin(IP_p3)..byte2bin(IP_p4)
     return ip_str
 end
@@ -310,7 +361,7 @@ function split(str,delimiter)
         arr[n] = str
     end
     return arr
-end   
+end
 
 
 function blockip()
@@ -354,8 +405,8 @@ function fileExtCheck(ext)
     if ext then
         for rule in pairs(items) do
             if ngx.re.match(ext,rule,"isjo") then
-	        log('POST',ngx.var.request_uri,"-","file attack with ext "..ext)
-            say_html()
+	        log("-","file attack with ext "..ext .. " rule: " .. rule)
+                say_html()
             end
         end
     end
@@ -398,5 +449,4 @@ function whiteip()
     end
     return false
 end
-
 
