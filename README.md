@@ -8,9 +8,12 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 =========================================================
 
 ## 【**】正在二次开发中的功能  
-1、频繁访问时，不再是单纯返回403，加入可以选功能图片验证码
-2、国家级别的地域限制（黑白名单）
-3、蜘蛛验证（这个还不确定）
+1、频繁访问时，不再是单纯返回403，加入可以选功能图片验证码  
+2、蜘蛛验证（这个还不确定）  
+
+
+## 【2020.06.19】  
+1、国家级别的地域限制（黑白名单）  
 
 
 ## 【2020.06.18】  
@@ -53,10 +56,26 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 
 ### 【2】安装使用说明：  
 openresty安装路径假设为: /usr/local/openresty  
-2.1）把ngx_lua_waf下载到/usr/local/openresty/nginx/conf/目录下,解压命名为waf  
+2.1）下载文件：  
+* 把ngx_lua_waf下载到/usr/local/openresty/nginx/conf/目录下,解压命名为waf  
+* 确保lua_package_cpath配置中包含cjson.so（openrestym默认包含）  
+
+2.1.1）安装lua 库依赖 libmaxminddb 实现对 mmdb 的高效访问  
+
+    wget https://github.com/maxmind/libmaxminddb/releases/download/1.4.2/libmaxminddb-1.4.2.tar.gz
+    tar -zxvf libmaxminddb-1.4.2.tar.gz
+    cd libmaxminddb-1.4.2
+    ./configure
+    make
+    make check
+    sudo make install
+    echo /usr/local/lib  >> /etc/ld.so.conf.d/local.conf
+    sudo ldconfig  
+
 2.2）在nginx.conf的http段添加  
 
     lua_package_path  "/usr/local/openresty/nginx/conf/waf/?.lua";
+    lua_package_cpath  "/usr/local/openresty/lualib/?.so;;";  
     lua_shared_dict urllimit 10m;
     lua_shared_dict iplimit 10m;
     init_by_lua_file   /usr/local/openresty/nginx/conf/waf/init.lua;
@@ -146,3 +165,9 @@ openresty安装路径假设为: /usr/local/openresty
 > https://github.com/oneinstack/ngx_lua_waf  
 > https://github.com/taihedeveloper/ngx_lua_waf  
 感谢ngx_lua模块的开发者，感谢openresty的春哥！！！  
+
+
+##【其他资源说明】  
+* [GeoLite2-City.mmdb/GeoLite2-Country.mmdb](https://dev.maxmind.com/geoip/geoip2/geolite2/)  
+* [maxminddb.lua](https://dev.maxmind.com/geoip/geoip2/downloadable/#MaxMind_APIs)  
+* [libmaxminddb](https://github.com/maxmind/libmaxminddb/releases)  
