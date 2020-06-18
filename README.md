@@ -108,26 +108,28 @@ openresty安装路径假设为: /usr/local/openresty
 	black_fileExt={"php","jsp"}
 	--填写可上传文件后缀类型
 
-	ipWhitelist={"127.0.0.1"}
-	--ip白名单，多个ip用逗号分隔,
-	--支持:
-	--1)范围划分法 "192.168.0.70-192.168.0.99"  
-	--2)掩码划分法 "192.168.0.0/24"
-	ipBlocklist={"1.0.0.1"}
-	--ip黑名单，多个ip用逗号分隔
-	--支持:
-	----1)范围划分法 "192.168.0.70-192.168.0.99"  
-	----2)掩码划分法 "192.168.0.0/24"
+    ipWhitelist={"127.0.0.1"}
+    --ip白名单，多个ip用逗号分隔,
+    --支持:
+    --1)范围划分法 "192.168.0.70-192.168.0.99"  
+    --2)掩码划分法 "192.168.0.0/24"
+    ipBlocklist={"1.0.0.1"}
+    --ip黑名单，多个ip用逗号分隔
+    --支持:
+    ----1)范围划分法 "192.168.0.70-192.168.0.99"  
+    ----2)掩码划分法 "192.168.0.0/24"
 
-	whiteHostModule="off"
-	--是否开启主机(对应nginx里面的server_name)白名单
-	hostWhiteList = {"blog.whsir.com"}
-	--server_name白名单，多个用逗号分隔
+    whiteHostModule="off"
+    --是否开启主机(对应nginx里面的server_name)白名单
+    hostWhiteList = {"blog.whsir.com"}
+    --server_name白名单，多个用逗号分隔
 
-	CCDeny="on"
-	--是否开启拦截cc攻击(需要nginx.conf的http段增加lua_shared_dict limit 10m;)
-	CCrate="10/60"
-	--设置cc攻击频率，单位为秒.默认1分钟同一个IP只能请求同一个地址100次
+    CCDeny="on"
+    --是否开启拦截cc攻击(需要nginx.conf的http段增加lua_shared_dict limit 10m;)
+    urlCCrate="100/60"
+    -- ip访问特定url频率（次/秒）
+    ipCCrate="500/60"
+    -- 访问ip频次检测（次/秒）,该值应该是urlCCrate的5-20倍左右
 
 
 	html=[[
