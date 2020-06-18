@@ -7,12 +7,12 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 **欢迎所有有兴趣的同学进行协同开发，在留言处@我**
 =========================================================
 
-##【**】正在二次开发中的功能
+## 【**】正在二次开发中的功能
 
 1、频繁访问时，不再是单纯返回403，加入可以选功能图片验证码
 
 
-##【2020.06.18】##
+## 【2020.06.18】##
 
 1、获取客户端IP，支持代理，多级代理情况下只取最后一级
 
@@ -26,13 +26,13 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 
 
 
-##【2020.06.17】
+## 【2020.06.17】
 
 1、增加黑白名单IP段掩码限制方法，例如：ipWhitelist={"127.0.0.1","192.168.1.0/24"}
 
 
 
-##【**】增加功能如下：
+## 【**】增加功能如下：
 
 1、增加黑白名单网段IP限制，例如：ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
 
@@ -53,7 +53,7 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 	屏蔽图片附件类目录php执行权限
 	防止webshell上传
 	
-###【1】环境推荐安装:
+### 【1】环境推荐安装:
 
 1.1）推荐使用lujit2.1做lua支持
 
@@ -64,7 +64,7 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 1.4）推荐编译安装openresty时添加后端检查模块 “[nginx_upstream_check_module](https://github.com/yaoweibin/nginx_upstream_check_module)”,并添加模块参数“--with-http_geoip_module”
 
 
-###【2】安装使用说明：
+### 【2】安装使用说明：
 openresty安装路径假设为: /usr/local/openresty
 
 2.1）把ngx_lua_waf下载到/usr/local/openresty/nginx/conf/目录下,解压命名为waf
@@ -142,7 +142,7 @@ openresty安装路径假设为: /usr/local/openresty
         --警告内容,可在中括号内自定义
         备注:不要乱动双引号，区分大小写
 		
-###【3】检查规则是否生效
+### 【3】检查规则是否生效
 部署完毕可以尝试如下命令：
 
         curl http://xxxx/test.php?id=/etc/passwd
@@ -154,9 +154,10 @@ openresty安装路径假设为: /usr/local/openresty
 
 
 
-【特别说明】
+## 【特别说明】
 以上代码参考以下项目：
 https://github.com/loveshell/ngx_lua_waf
 https://github.com/whsir/ngx_lua_waf
 https://github.com/oneinstack/ngx_lua_waf
+https://github.com/taihedeveloper/ngx_lua_waf
 感谢ngx_lua模块的开发者，感谢openresty的春哥！！！
