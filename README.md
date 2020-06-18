@@ -167,7 +167,7 @@ openresty安装路径假设为: /usr/local/openresty
 感谢ngx_lua模块的开发者，感谢openresty的春哥！！！  
 
 
-##【其他资源说明】  
+## 【其他资源说明】  
 * [GeoLite2-City.mmdb/GeoLite2-Country.mmdb](https://dev.maxmind.com/geoip/geoip2/geolite2/)  
 * [maxminddb.lua](https://dev.maxmind.com/geoip/geoip2/downloadable/#MaxMind_APIs)  
 * [libmaxminddb](https://github.com/maxmind/libmaxminddb/releases)  
