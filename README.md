@@ -12,7 +12,7 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 1、频繁访问时，不再是单纯返回403，加入可以选功能图片验证码
 
 
-## 【2020.06.18】##
+## 【2020.06.18】
 
 1、获取客户端IP，支持代理，多级代理情况下只取最后一级
 
@@ -156,8 +156,8 @@ openresty安装路径假设为: /usr/local/openresty
 
 ## 【特别说明】
 以上代码参考以下项目：
-https://github.com/loveshell/ngx_lua_waf
-https://github.com/whsir/ngx_lua_waf
-https://github.com/oneinstack/ngx_lua_waf
-https://github.com/taihedeveloper/ngx_lua_waf
+> https://github.com/loveshell/ngx_lua_waf
+* https://github.com/whsir/ngx_lua_waf
+* https://github.com/oneinstack/ngx_lua_waf
+* https://github.com/taihedeveloper/ngx_lua_waf
 感谢ngx_lua模块的开发者，感谢openresty的春哥！！！
