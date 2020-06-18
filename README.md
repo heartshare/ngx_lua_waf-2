@@ -7,38 +7,27 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 **欢迎所有有兴趣的同学进行协同开发，在留言处@我**
 =========================================================
 
-## 【**】正在二次开发中的功能
-
+## 【**】正在二次开发中的功能  
 1、频繁访问时，不再是单纯返回403，加入可以选功能图片验证码
 
 
-## 【2020.06.18】
-
-1、获取客户端IP，支持代理，多级代理情况下只取最后一级
-
-2、修改原来单一针对IP做cc检测。添加URL频率cc攻击检测，其次才是Ip 频率cc攻击检测（需要修改nginx配置，lua_shared_dict部分）
-
-3、优化局部变量，减少高并发时变量覆盖
-
-4、优化日志记录参时提醒
-
-5、优化规则执行顺序
+## 【2020.06.18】  
+1、获取客户端IP，支持代理，多级代理情况下只取最后一级  
+2、修改原来单一针对IP做cc检测。添加URL频率cc攻击检测，其次才是Ip 频率cc攻击检测（需要修改nginx配置，lua_shared_dict部分）  
+3、优化局部变量，减少高并发时变量覆盖  
+4、优化日志记录参时提醒  
+5、优化规则执行顺序  
 
 
-
-## 【2020.06.17】
-
+## 【2020.06.17】  
 1、增加黑白名单IP段掩码限制方法，例如：ipWhitelist={"127.0.0.1","192.168.1.0/24"}
 
 
 
-## 【**】增加功能如下：
-
-1、增加黑白名单网段IP限制，例如：ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}
-
-2、增加User-Agent白名单，用来过滤蜘蛛的。在wafconf文件夹下white-user-agent文件中添加
-
-3、增加server_name白名单。
+## 【**】增加功能如下：  
+1、增加黑白名单网段IP限制，例如：ipWhitelist={"127.0.0.1","172.16.1.0-172.16.1.255"}  
+2、增加User-Agent白名单，用来过滤蜘蛛的。在wafconf文件夹下white-user-agent文件中添加  
+3、增加server_name白名单。  
 
 
 
@@ -53,23 +42,17 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 	屏蔽图片附件类目录php执行权限
 	防止webshell上传
 	
-### 【1】环境推荐安装:
-
-1.1）推荐使用lujit2.1做lua支持
-
-1.2）ngx_lua如果是0.9.2以上版本，建议正则过滤函数改为ngx.re.find，匹配效率会提高三倍左右。
-
-1.3）推荐直接使用openresty部署，而不是自己手动部署nginx+lua，下面安装示例使用“openresty/1.15.8.3”
-
-1.4）推荐编译安装openresty时添加后端检查模块 “[nginx_upstream_check_module](https://github.com/yaoweibin/nginx_upstream_check_module)”,并添加模块参数“--with-http_geoip_module”
+### 【1】环境推荐安装:  
+1.1）推荐使用lujit2.1做lua支持  
+1.2）ngx_lua如果是0.9.2以上版本，建议正则过滤函数改为ngx.re.find，匹配效率会提高三倍左右。  
+1.3）推荐直接使用openresty部署，而不是自己手动部署nginx+lua，下面安装示例使用“openresty/1.15.8.3”  
+1.4）推荐编译安装openresty时添加后端检查模块 “[nginx_upstream_check_module](https://github.com/yaoweibin/nginx_upstream_check_module)”,并添加模块参数“--with-http_geoip_module”  
 
 
-### 【2】安装使用说明：
-openresty安装路径假设为: /usr/local/openresty
-
-2.1）把ngx_lua_waf下载到/usr/local/openresty/nginx/conf/目录下,解压命名为waf
-
-2.2）在nginx.conf的http段添加
+### 【2】安装使用说明：  
+openresty安装路径假设为: /usr/local/openresty  
+2.1）把ngx_lua_waf下载到/usr/local/openresty/nginx/conf/目录下,解压命名为waf  
+2.2）在nginx.conf的http段添加  
 
     lua_package_path  "/usr/local/openresty/nginx/conf/waf/?.lua";
     lua_shared_dict urllimit 10m;
@@ -81,12 +64,12 @@ openresty安装路径假设为: /usr/local/openresty
 
     RulePath = "/usr/local/openresty/nginx/conf/waf/wafconf/"
 
-路径如有变动，需对应修改，然后重启nginx即可
-2.4）配置config.lua里的日志目录(该目录需要自己提前创建)
+路径如有变动，需对应修改，然后重启nginx即可  
+2.4）配置config.lua里的日志目录(该目录需要自己提前创建)  
 
     logdir = "/usr/local/openresty/nginx/waflogs/"
 
-2.5）###配置文件详细说明：
+2.5）配置文件详细说明：  
 
 	RulePath = "/usr/local/openresty/nginx/conf/waf/wafconf/"
 	attacklog = "on"
@@ -142,7 +125,7 @@ openresty安装路径假设为: /usr/local/openresty
         --警告内容,可在中括号内自定义
         备注:不要乱动双引号，区分大小写
 		
-### 【3】检查规则是否生效
+### 【3】检查规则是否生效  
 部署完毕可以尝试如下命令：
 
         curl http://xxxx/test.php?id=/etc/passwd
@@ -154,10 +137,10 @@ openresty安装路径假设为: /usr/local/openresty
 
 
 
-## 【特别说明】
-以上代码参考以下项目：
+## 【特别说明】  
+以上代码参考以下项目：  
 > https://github.com/loveshell/ngx_lua_waf
-* https://github.com/whsir/ngx_lua_waf
-* https://github.com/oneinstack/ngx_lua_waf
-* https://github.com/taihedeveloper/ngx_lua_waf
-感谢ngx_lua模块的开发者，感谢openresty的春哥！！！
+> https://github.com/whsir/ngx_lua_waf
+> https://github.com/oneinstack/ngx_lua_waf
+> https://github.com/taihedeveloper/ngx_lua_waf
+感谢ngx_lua模块的开发者，感谢openresty的春哥！！！  
