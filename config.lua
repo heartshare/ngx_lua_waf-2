@@ -45,6 +45,14 @@ ipCCrate="500/60"
 -- 访问ip频次检测（次/秒）,该值应该是urlCCrate的5-20倍左右
 
 
+CountryLimit="on"
+--否开启IP源的国家限制，黑白名单。国家代码参考[ISO_3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) 
+WhiteCountry={"CN"}
+--白名单国家，优先级低于"ipBlocklist"。针对内网或无法识别的IP统一进行放行。
+BlockCountry={""}
+--黑名单国家，优先级低于"ipWhitelist"。
+
+
 html=[[
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

@@ -1,4 +1,5 @@
 require 'config'
+require 'country_check'
 local match = string.match
 local ngxmatch=ngx.re.match
 local unescape=ngx.unescape_uri
@@ -14,7 +15,12 @@ WhiteHostCheck = optionIsOn(whiteHostModule)
 PathInfoFix = optionIsOn(PathInfoFix)
 attacklog = optionIsOn(attacklog)
 CCDeny = optionIsOn(CCDeny)
-Redirect=optionIsOn(Redirect)
+Redirect = optionIsOn(Redirect)
+CountryLimit = optionIsOn(CountryLimit)
+
+
+
+
 
 --验证码
 function WafCaptcha()
@@ -449,4 +455,6 @@ function whiteip()
     end
     return false
 end
+
+
 

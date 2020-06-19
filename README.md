@@ -13,7 +13,7 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 
 
 ## 【2020.06.19】  
-1、国家级别的地域限制（黑白名单）  
+1、国家级别的地域限制（黑白名单）。国家代码参考[ISO_3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)。"GeoLite2-City.mmdb/GeoLite2-Country.mmdb"后期请自行更新  
 
 
 ## 【2020.06.18】  
@@ -60,7 +60,7 @@ openresty安装路径假设为: /usr/local/openresty
 * 把ngx_lua_waf下载到/usr/local/openresty/nginx/conf/目录下,解压命名为waf  
 * 确保lua_package_cpath配置中包含cjson.so（openrestym默认包含）  
 
-2.1.1）安装lua 库依赖 libmaxminddb 实现对 mmdb 的高效访问  
+2.1.1）安装lua 库依赖 libmaxminddb 实现对 mmdb 的高效访问  (使用yum安装的，版本较低。yum install libmaxminddb-devel -y)
 
     wget https://github.com/maxmind/libmaxminddb/releases/download/1.4.2/libmaxminddb-1.4.2.tar.gz
     tar -zxvf libmaxminddb-1.4.2.tar.gz

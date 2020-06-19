@@ -6,6 +6,8 @@ elseif whitehost() then
 elseif whiteua() then
 elseif blockip() then
 elseif whiteurl() then
+elseif country_white() then
+elseif country_block() then
 elseif denycc() then
 elseif ngx.var.http_Acunetix_Aspect then
     ngx.exit(444)
