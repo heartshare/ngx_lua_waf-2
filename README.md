@@ -8,9 +8,15 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 =========================================================
 
 ## 【**】正在二次开发中的功能  
-1、频繁访问时，不再是单纯返回403，加入可以选功能图片验证码  
+1、针对疑似机器人访问行为，浮层滑块验证，不再是单纯返回403，加入可以选功能图片验证码  
 2、蜘蛛验证（这个还不确定）  
-
+3、头部字段Referer限制  
+4、HTTP请求时，要求headers出现哪些字段，防护低级伪造爬虫  
+5、根据连续异常响应码分布，限制IP访问（拦截黑客针对不存在的URL地址发起的大量恶意访问）  
+6、支持如wordpress pingback等常见CC变种型攻击防护  
+7、封禁libcurl，python脚本等构造的恶意访问  
+8、可设置对某些特定URL地址(如管理员登录后台)指定只允许某些IP访问  
+9、基于日志服务，提供全量访问日志的攻击比例分析  
 
 ## 【2020.06.19】  
 1、国家级别的地域限制（黑白名单）。国家代码参考[ISO_3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)。"GeoLite2-City.mmdb/GeoLite2-Country.mmdb"后期请自行更新  
@@ -37,7 +43,7 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 
 
 
-### 用途：
+### 初始功能：
 
 	防止sql注入，本地包含，部分溢出，fuzzing测试，xss,SSRF等web攻击
 	防止svn/备份之类文件泄漏
