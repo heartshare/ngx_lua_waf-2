@@ -162,59 +162,7 @@ openresty安装路径假设为: /usr/local/openresty
 
 2.5）配置文件详细说明：  
 
-	RulePath = "/usr/local/openresty/nginx/conf/waf/wafconf/"
-	attacklog = "on"
-	logdir = "/usr/local/openresty/nginx/waflogs/"
-
-
-	UrlDeny="on"
-	--是否拦截url访问
-
-	Redirect="on"
-	--是否拦截后重定向
-
-	CookieMatch="on"
-	--是否拦截cookie攻击
-
-	PostMatch="on"
-	--是否拦截post攻击
-
-	whiteModule="off"
-	--是否开启URL白名单
-
-	black_fileExt={"php","jsp"}
-	--填写可上传文件后缀类型
-
-    ipWhitelist={"127.0.0.1"}
-    --ip白名单，多个ip用逗号分隔,
-    --支持:
-    --1)范围划分法 "192.168.0.70-192.168.0.99"  
-    --2)掩码划分法 "192.168.0.0/24"
-    ipBlocklist={"1.0.0.1"}
-    --ip黑名单，多个ip用逗号分隔
-    --支持:
-    ----1)范围划分法 "192.168.0.70-192.168.0.99"  
-    ----2)掩码划分法 "192.168.0.0/24"
-
-    whiteHostModule="off"
-    --是否开启主机(对应nginx里面的server_name)白名单
-    hostWhiteList = {"blog.whsir.com"}
-    --server_name白名单，多个用逗号分隔
-
-    CCDeny="on"
-    --是否开启拦截cc攻击(需要nginx.conf的http段增加lua_shared_dict limit 10m;)
-    urlCCrate="100/60"
-    -- ip访问特定url频率（次/秒）
-    ipCCrate="500/60"
-    -- 访问ip频次检测（次/秒）,该值应该是urlCCrate的5-20倍左右
-
-
-	html=[[
-	xxx
-	]]
-
-        --警告内容,可在中括号内自定义
-        备注:不要乱动双引号，区分大小写
+	其他参数说明直接卸载配置文件中了  
 		
 ### 【3】检查规则是否生效  
 部署完毕可以尝试如下命令：
