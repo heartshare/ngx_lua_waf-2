@@ -33,18 +33,19 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
   ngx.var.server_name  
   --改为  
   ngx.var.host  
-2、正则表达式有问题 #149  或   使用了ngx_lua_waf这个模块后，页面上传超过256M的文件，nginx会报400的错误。请问ngx_lua_waf对文件上传限制在哪儿进行修改？ #123
+  
+3、正则表达式有问题 #149  或   使用了ngx_lua_waf这个模块后，页面上传超过256M的文件，nginx会报400的错误。请问ngx_lua_waf对文件上传限制在哪儿进行修改？ #123
 * 描述：POST匹配文件的表达式中表达式有误，看了很多这个项目的小伙伴后觉得还是不对 
-  此处涉及多处修改和逻辑修改
-3、通过URL传参时容易造成CC攻击误报
+  此处涉及多处修改和逻辑修改  
+4、通过URL传参时容易造成CC攻击误报  
 * 描述：有些架构都需要访问index.php?id=xxx,具体资源有id来指定，那么index.php这个页面容易触发cc规则访问被deny，这样会造成大量的误报，有什么办法解决这个问题吗？ #77  
 解决办法：  
-  生成token时引入ngx.var.request_uri而不是单纯的uri，并且使用url安全的进行encode_base64url 数据编码方式  
-4、上传zip文件被post规则匹配到，导致403 #130  
+  生成token时引入ngx.var.request_uri而不是单纯的uri，并且使用url安全的进行encode_base64url 数据编码方式   
+5、上传zip文件被post规则匹配到，导致403 #130  
 * 描述：原因是 被 post 里面的 匹配到疑似攻击内容  
 解决办法：  
-  对上传文件新增独立检查开关，而不是直接关闭post检查  
-5、发现用了waf开启Post功能，上传图片大的会上传不了，请问哪里取消图片容量限制？ #115  
+  对上传文件新增独立检查开关，而不是直接关闭post检查   
+6、发现用了waf开启Post功能，上传图片大的会上传不了，请问哪里取消图片容量限制？ #115  
 * 描述：原因是应该是nginx允许上传的参数不够大  
 解决办法： 
   调整您配置的两个参数，参数含义自己查，生产建议不高于100m。  
@@ -52,11 +53,12 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
   client_max_body_size 512m;  
   
 其他自己发现的bug  
-6、匹配文件后缀时，采用match导致部分匹配，误拒绝POST上传  
+7、匹配文件后缀时，采用match导致部分匹配，误拒绝POST上传  
   if ngx.re.match(ext,rule,"isjo") then
   --改为
   if string.lower(rule) == ext then  
-7、上传文件时，上传js,py,html文件时日志变为cat文件，优化记录日记和错误拦截  
+  
+8、上传文件时，上传js,py,html文件时日志变为cat文件，优化记录日记和错误拦截  
   log("-","file attack with ext "..ext .. " rule: " .. rule)
   --改为
   log("-","file attack with ext. rule: " .. rule)  
@@ -67,12 +69,12 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 2、上传文件的后缀黑名单改为允许上传的后缀白名单（因为未知的文件后缀数量太多，而且具有不确定性），并且对文件没有后缀的跳过次检查（ps你也可以强制改为必须有后缀，但感觉意义不大）  
 3、对上传成功的文件和，上传失败的，单独记录日志，便于查找  
 【修改nginx配置lua环境参数】  
-    lua_package_path  "/usr/local/openresty/nginx/conf/waf/?.lua;;";
-    lua_package_cpath  "/usr/local/openresty/lualib/?.so;;";
-    lua_shared_dict urllimit 10m;
-    lua_shared_dict iplimit 10m;
-    init_by_lua_file   /usr/local/openresty/nginx/conf/waf/init.lua;
-    access_by_lua_file /usr/local/openresty/nginx/conf/waf/waf.lua;  
+    lua_package_path  "/usr/local/openresty/nginx/conf/waf/?.lua;;";  
+    lua_package_cpath  "/usr/local/openresty/lualib/?.so;;";  
+    lua_shared_dict urllimit 10m;  
+    lua_shared_dict iplimit 10m;  
+    init_by_lua_file   /usr/local/openresty/nginx/conf/waf/init.lua;  
+    access_by_lua_file /usr/local/openresty/nginx/conf/waf/waf.lua;   
     
   
   
