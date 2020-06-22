@@ -67,18 +67,19 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
   log("-","file attack with ext. rule: " .. rule)   
   --还有log函数，略..。  
   
-【新增功能】  
+*【新增功能】*  
 1、post文件上传时单独对文件内容检查设置一个小开关  
 2、上传文件的后缀黑名单改为允许上传的后缀白名单（因为未知的文件后缀数量太多，而且具有不确定性），并且对文件没有后缀的跳过次检查（ps你也可以强制改为必须有后缀，但感觉意义不大）  
 3、对上传成功的文件和，上传失败的，单独记录日志，便于查找  
-【修改nginx配置lua环境参数】  
+*【修改nginx配置lua环境参数】*  
     lua_package_path  "/usr/local/openresty/nginx/conf/waf/?.lua;;";  
     lua_package_cpath  "/usr/local/openresty/lualib/?.so;;";  
     lua_shared_dict urllimit 10m;  
     lua_shared_dict iplimit 10m;  
     init_by_lua_file   /usr/local/openresty/nginx/conf/waf/init.lua;  
     access_by_lua_file /usr/local/openresty/nginx/conf/waf/waf.lua;   
-    
+  
+  
   
   
 ## 【2020.06.19】  
