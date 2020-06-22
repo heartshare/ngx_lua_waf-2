@@ -14,9 +14,8 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 4、HTTP请求时，要求headers出现哪些字段，防护低级伪造爬虫  
 5、根据连续异常响应码分布，限制IP访问（拦截黑客针对不存在的URL地址发起的大量恶意访问）  
 6、支持如wordpress pingback等常见CC变种型攻击防护  
-7、封禁libcurl，python脚本等构造的恶意访问  
-8、可设置对某些特定URL地址(如管理员登录后台)指定只允许某些IP访问  
-9、基于日志服务，提供全量访问日志的攻击比例分析  
+7、可设置对某些特定URL地址(如管理员登录后台)指定只允许某些IP访问  
+8、基于日志服务，提供全量访问日志的攻击比例分析  
   
   
   
