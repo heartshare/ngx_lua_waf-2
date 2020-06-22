@@ -42,7 +42,7 @@ function country_block()
             for country_iso in pairs(items) do
                 if country == string.upper(country_iso) then
                     log("-","BlockCountry: ".. country)
-                    ngx.exit(403)
+                    say_html("地域访问限制，请稍后再试")
                     return true
                 end
             end

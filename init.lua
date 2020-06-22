@@ -1,5 +1,6 @@
 require 'config'
 require 'country_check'
+local b64 = require 'ngx.base64'
 local match = string.match
 local ngxmatch=ngx.re.match
 local unescape=ngx.unescape_uri
@@ -17,7 +18,7 @@ attacklog = optionIsOn(attacklog)
 CCDeny = optionIsOn(CCDeny)
 Redirect = optionIsOn(Redirect)
 CountryLimit = optionIsOn(CountryLimit)
-
+FileContentCheck = optionIsOn(FileContentCheck)
 
 
 
@@ -61,15 +62,38 @@ function log(data,ruletag)
     if attacklog then
         local realIp = getClientIp()
         local ua = ngx.var.http_user_agent
-        local servername=ngx.var.server_name
+        --local servername=ngx.var.server_name
+        local servername=ngx.var.host
         local time=ngx.localtime()
-        if ua  then
-            line = realIp.." ["..time.."] \""..request_method.." "..servername..url.."\" \""..data.."\"  \""..ua.."\" \""..ruletag.."\"\n"
-        else
-            line = realIp.." ["..time.."] \""..request_method.." "..servername..url.."\" \""..data.."\" - \""..ruletag.."\"\n"
-        end
         local filename = logpath..'/'..servername.."_"..ngx.today().."_sec.log"
-        write(filename,line)
+        if ua  then
+            local line = realIp.." ["..time.."] \""..request_method.." "..servername..url.."\" \""..data.."\"  \""..ua.."\" \""..ruletag.."\"\n"
+            write(filename,line)
+        else
+            local line = realIp.." ["..time.."] \""..request_method.." "..servername..url.."\" \""..data.."\" - \""..ruletag.."\"\n"
+            write(filename,line)
+        end
+    end
+end
+
+--记录上传的文件
+function Filelog(logfilename,fn,finfo)
+    local request_method = ngx.req.get_method()
+    local url = ngx.var.request_uri
+    if attacklog then
+        local realIp = getClientIp()
+        local ua = ngx.var.http_user_agent
+        --local servername=ngx.var.server_name
+        local servername=ngx.var.host
+        local time=ngx.localtime()
+        local filename = logpath..'/'..servername.."_"..ngx.today().."_"..logfilename..".log"
+        if ua  then
+            local line = realIp.." ["..time.."] \""..request_method.." "..servername..url.."\" \""..fn.."\"  \""..ua.."\" \""..finfo.."\"\n"
+            write(filename,line)
+        else
+            local line = realIp.." ["..time.."] \""..request_method.." "..servername..url.."\" \""..fn.."\" - \""..finfo.."\"\n"
+            write(filename,line)
+        end
     end
 end
 
@@ -118,7 +142,7 @@ function say_html(v)
      else
          ngx.header.content_type = "text/html; charset=UTF-8"
          ngx.status = ngx.HTTP_FORBIDDEN
-         ngx.say(say2_html(v))
+         ngx.say(say2_html(string.format(html,v)))
          ngx.exit(ngx.status)
      end
 end
@@ -157,7 +181,7 @@ function args()
     for _,rule in pairs(argsrules) do
             if ngxmatch(unescape(ngx.var.request_uri),rule,"isjo") then
                     log("-",rule)
-                    say_html()
+                    say_html("URL请求异常")
                     return true
             end
         local args = ngx.req.get_uri_args()
@@ -176,7 +200,7 @@ function args()
             end
             if data and type(data) ~= "boolean" and rule ~="" and ngxmatch(unescape(data),rule,"isjo") then
                 log("-", "args in attack rules: " .. rule .. " data: " .. tostring(data))
-                say_html()
+                say_html("URL参数异常")
                 return true
             end
         end
@@ -189,7 +213,7 @@ function url()
         for _,rule in pairs(urlrules) do
             if rule ~="" and ngxmatch(ngx.var.request_uri,rule,"isjo") then
                 log("-", "url in attack rules: " .. rule)
-                say_html()
+                say_html("URL拦截命中")
                 return true
             end
         end
@@ -203,7 +227,7 @@ function ua()
         for _,rule in pairs(uarules) do
             if rule ~="" and ngxmatch(ua,rule,"isjo") then
                 log("-", "ua in attack rules: " .. rule)
-                say_html()
+                say_html("UA拦截命中")
                 return true
             end
         end
@@ -211,11 +235,15 @@ function ua()
     return false
 end
 
+--body内容检查
 function body(data)
+    if not FileContentCheck then
+        return false
+    end
     for _,rule in pairs(postrules) do
         if rule ~="" and data~="" and ngxmatch(unescape(data),rule,"isjo") then
             log(data,rule)
-            say_html()
+            say_html("Body POST拦截命中")
             return true
         end
     end
@@ -230,7 +258,7 @@ function cookie()
         for _,rule in pairs(ckrules) do
             if rule ~="" and ngxmatch(ck,rule,"isjo") then
                 log("-", "cookie in attack rules: " .. rule)
-                say_html()
+                say_html("Cookie异常,疑似攻击")
                 return true
             end
         end
@@ -246,13 +274,16 @@ end
 ]]
 function denycc()
     if CCDeny then
-        local uri = ngx.var.uri
+        --local uri = ngx.var.uri
+        --改用request_uri,并且进行base64，以防特殊符号出问题。解决使用URL传参导致触发CC异常  
+        --base64url是Base64编码的一种改进形式，它用“－”和“_”替代了“＋”和“／”，编码后长度不是4的倍数时也不使用“＝”填补，可以安全地用在URL 里。
+        local uri = b64.encode_base64url(tostring(ngx.var.request_uri))
         local CCcount = tonumber(string.match(urlCCrate, "(.*)/"))
         local CCseconds = tonumber(string.match(urlCCrate, "/(.*)"))
         local ipCCcount = tonumber(string.match(ipCCrate, "(.*)/"))
         local ipCCseconds = tonumber(string.match(ipCCrate, "/(.*)"))
         local now_ip = getClientIp()
-        local token = now_ip .. uri
+        local token = now_ip .. '.' ..uri
         local urllimit = ngx.shared.urllimit
         local iplimit = ngx.shared.iplimit
         local req, _ = urllimit:get(token)
@@ -262,6 +293,7 @@ function denycc()
             if req > CCcount then
                 log("-", "IP get url over times. ")
                 say_html("IpURL频繁访问限制，请稍后再试")
+        --        say_html(token)
                 return true
             else
                 urllimit:incr(token, 1)
@@ -405,16 +437,19 @@ function blockip()
         return false
 end
 
-function fileExtCheck(ext)
-    local items = Set(black_fileExt)
-    ext=string.lower(ext)
+--上传文件白名单后缀检查
+function fileExtCheck(ext,fn,finfo)
+    local items = Set(white_fileExt)
+    local ext = string.lower(ext)
     if ext then
         for rule in pairs(items) do
-            if ngx.re.match(ext,rule,"isjo") then
-	        log("-","file attack with ext "..ext .. " rule: " .. rule)
-                say_html()
+            if string.lower(rule) == ext then 
+                Filelog('UploadFile',fn,finfo)
+                return true
             end
         end
+        Filelog('UploadFileFailed',fn,finfo)
+        say_html('该类型文件不允许上传：'..ext)
     end
     return false
 end
