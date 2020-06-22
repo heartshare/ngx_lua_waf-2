@@ -37,14 +37,17 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
 3、正则表达式有问题 #149  或   使用了ngx_lua_waf这个模块后，页面上传超过256M的文件，nginx会报400的错误。请问ngx_lua_waf对文件上传限制在哪儿进行修改？ #123
 * 描述：POST匹配文件的表达式中表达式有误，看了很多这个项目的小伙伴后觉得还是不对 
   此处涉及多处修改和逻辑修改  
+  
 4、通过URL传参时容易造成CC攻击误报  
 * 描述：有些架构都需要访问index.php?id=xxx,具体资源有id来指定，那么index.php这个页面容易触发cc规则访问被deny，这样会造成大量的误报，有什么办法解决这个问题吗？ #77  
 解决办法：  
   生成token时引入ngx.var.request_uri而不是单纯的uri，并且使用url安全的进行encode_base64url 数据编码方式   
+  
 5、上传zip文件被post规则匹配到，导致403 #130  
 * 描述：原因是 被 post 里面的 匹配到疑似攻击内容  
 解决办法：  
   对上传文件新增独立检查开关，而不是直接关闭post检查   
+  
 6、发现用了waf开启Post功能，上传图片大的会上传不了，请问哪里取消图片容量限制？ #115  
 * 描述：原因是应该是nginx允许上传的参数不够大  
 解决办法： 
@@ -54,14 +57,14 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
   
 其他自己发现的bug  
 7、匹配文件后缀时，采用match导致部分匹配，误拒绝POST上传  
-  if ngx.re.match(ext,rule,"isjo") then
-  --改为
+  if ngx.re.match(ext,rule,"isjo") then  
+  --改为  
   if string.lower(rule) == ext then  
   
 8、上传文件时，上传js,py,html文件时日志变为cat文件，优化记录日记和错误拦截  
-  log("-","file attack with ext "..ext .. " rule: " .. rule)
-  --改为
-  log("-","file attack with ext. rule: " .. rule)  
+  log("-","file attack with ext "..ext .. " rule: " .. rule)  
+  --改为  
+  log("-","file attack with ext. rule: " .. rule)   
   --还有log函数，略..。  
   
 【新增功能】  
