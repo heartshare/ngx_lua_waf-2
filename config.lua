@@ -21,8 +21,7 @@ white_fileExt={"bmp","jpg","png","tif","gif",
 "wps","dps","et","doc","docx","ppt","pptx","xls","xlsx","csv","obt",
 "zip","rar","gz","tar","gzip","7z","tgz","tbz","bz2",
 "wav","mp3","wma","mmf","amr","aac","flac",
-"txt","pdf","yml","yaml","conf","log","rpm",
-"crt","key","pem","fpx","cer"}
+"txt","pdf","yml","yaml","conf","log","rpm"}
 --填写可上传的文件后缀类型(不区分大小写)
 PostMatch="on"
 --是否拦截post攻击【所有post检查的总开关】
