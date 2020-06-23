@@ -293,7 +293,6 @@ function denycc()
             if req > CCcount then
                 log("-", "IP get url over times. ")
                 say_html("IpURL频繁访问限制，请稍后再试")
-        --        say_html(token)
                 return true
             else
                 urllimit:incr(token, 1)
@@ -313,10 +312,11 @@ function denycc()
         else
             iplimit:set(now_ip, 1, ipCCseconds)
         end
+        return false
     end
-
     return false
 end
+
 
 
 
@@ -402,6 +402,7 @@ function split(str,delimiter)
 end
 
 
+
 function blockip()
     if next(ipBlocklist) ~= nil then
         local cIP = getClientIp()
@@ -430,11 +431,13 @@ function blockip()
                 if IpBelongToNetwork(IP2bin(cIP),IP2bin(ip_list[1]),ip_list[2]) then
                     ngx.exit(403)
                     return true
-                end 
+                end
+            else
+                return false
             end
         end
     end
-        return false
+    return false
 end
 
 --上传文件白名单后缀检查
@@ -459,11 +462,12 @@ function Set (list)
   return set
 end
 
+
 function whiteip()
     if next(ipWhitelist) ~= nil then
         local cIP = getClientIp()
         local numIP = 0
-        if cIP ~= "unknown" then 
+        if cIP ~= "unknown" then
             numIP = tonumber(ipToDecimal(cIP))
         end
         for _,ip in pairs(ipWhitelist) do
@@ -485,6 +489,8 @@ function whiteip()
                 if IpBelongToNetwork(IP2bin(cIP),IP2bin(ip_list[1]),ip_list[2]) then
                     return true
                 end
+            else
+                return false
             end
         end
     end
