@@ -1,8 +1,10 @@
 local content_length=tonumber(ngx.req.get_headers()['content-length'])
 local method=ngx.req.get_method()
 local ngxmatch=ngx.re.match
-if whiteip() then
+if Block_RequestMethod() then
+elseif whiteip() then
 elseif whitehost() then
+elseif RefererLimit() then
 elseif whiteua() then
 elseif blockip() then
 elseif whiteurl() then

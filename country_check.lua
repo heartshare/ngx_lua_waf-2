@@ -29,8 +29,11 @@ function country_white()
                     return true
                 end
             end
+            return false
         end
+        return false
     end
+    return false
 end
 
 -- 国家黑名单验证
@@ -46,6 +49,9 @@ function country_block()
                     return true
                 end
             end
+            return false
         end
+        return false
     end
+    return false
 end

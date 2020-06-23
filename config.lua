@@ -15,13 +15,18 @@ CookieMatch="on"
 whiteModule="on"
 --是否开启URL白名单
 
+Referer="on"
+--是否开启防盗链黑白名单,在wafconf的WhiteReferer/BlockReferer配置，referer为空也不会限制
+
+BlockRequestMethod={"TRACE","TRACK","OPTIONS","PUT","PATCH","DELETE","CONNECT"}
+--HTTP/HTTPS协议请求方法限制（限制TRACE/TRACK/OPTIONS/PUT/PATCH/DELETE/CONNECT）,不允许未知方法
 
 
 white_fileExt={"bmp","jpg","png","tif","gif",
 "wps","dps","et","doc","docx","ppt","pptx","xls","xlsx","csv","obt",
 "zip","rar","gz","tar","gzip","7z","tgz","tbz","bz2",
 "wav","mp3","wma","mmf","amr","aac","flac",
-"txt","pdf","yml","yaml","conf","log"}
+"txt","pdf","yml","yaml","conf","log","rpm"}
 --填写可上传的文件后缀类型(不区分大小写)
 PostMatch="on"
 --是否拦截post攻击【所有post检查的总开关】
@@ -47,9 +52,9 @@ hostWhiteList = {"blog.whsir.com"}
 
 CCDeny="on"
 --是否开启拦截cc攻击(需要nginx.conf的http段增加lua_shared_dict limit 10m;)
-urlCCrate="100/60"
+urlCCrate="2000/60"
 -- ip访问特定url频率（次/秒）
-ipCCrate="500/60"
+ipCCrate="3000/60"
 -- 访问ip频次检测（次/秒）,该值应该是urlCCrate的5-20倍左右
 
 

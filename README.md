@@ -16,10 +16,10 @@ ngx_lua_waf改版基于原[ngx_lua_waf](https://github.com/loveshell/ngx_lua_waf
   
   
 ## 【2020.06.X】  
-1、添加user-agent规则。支持如wordpress pingback等常见CC变种型攻击防护  
+1、添加user-agent规则。支持如wordpress/pingback等常见CC变种型攻击防护  
 2、头部字段Referer限制，防止恶意请求或防盗链  
 3、HTTP/HTTPS协议请求方法限制（限制TRACE/TRACK/OPTIONS/PUT/PATCH/DELETE/CONNECT）,不允许未知方法或空  
-*【Bug修复】*  
+**【Bug修复】**  
 1、修复User-agent为空时直接绕过UA规则检查。要求强制有UA才可以访问  
   
   
@@ -147,7 +147,7 @@ openresty安装路径假设为: /usr/local/openresty
 
 2.2）在nginx.conf的http段添加  
 
-    lua_package_path  "/usr/local/openresty/nginx/conf/waf/?.lua";
+    lua_package_path  "/usr/local/openresty/nginx/conf/waf/?.lua;;";
     lua_package_cpath  "/usr/local/openresty/lualib/?.so;;";  
     lua_shared_dict urllimit 10m;
     lua_shared_dict iplimit 10m;
